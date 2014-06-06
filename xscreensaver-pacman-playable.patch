@@ -1,6 +1,6 @@
-diff -u xscreensaver-5.10-orig/hacks/pacman_ai.c xscreensaver-5.10-todo/hacks/pacman_ai.c
---- xscreensaver-5.10-orig/hacks/pacman_ai.c	2006-02-07 11:56:45.000000000 +0100
-+++ xscreensaver-5.10-todo/hacks/pacman_ai.c	2010-06-06 22:22:45.000000000 +0200
+diff -u hacks/pacman_ai.c.orig hacks/pacman_ai.c
+--- hacks/pacman_ai.c.orig
++++ hacks/pacman_ai.c
 @@ -706,6 +706,37 @@
      p->lastbox = dir;
  }
@@ -56,9 +56,9 @@ diff -u xscreensaver-5.10-orig/hacks/pacman_ai.c xscreensaver-5.10-todo/hacks/pa
  
      p->cfactor = GETFACTOR (p->nextcol, p->col);
      p->rfactor = GETFACTOR (p->nextrow, p->row);
-diff -u xscreensaver-5.10-orig/hacks/pacman.c xscreensaver-5.10-todo/hacks/pacman.c
---- xscreensaver-5.10-orig/hacks/pacman.c	2008-07-31 12:40:05.000000000 +0200
-+++ xscreensaver-5.10-todo/hacks/pacman.c	2010-06-06 22:27:13.000000000 +0200
+diff -u hacks/pacman.c.orig hacks/pacman.c
+--- hacks/pacman.c.orig
++++ hacks/pacman.c
 @@ -57,7 +57,6 @@
  #	define UNIFORM_COLORS
  #	define BRIGHT_COLORS
@@ -122,9 +122,9 @@ diff -u xscreensaver-5.10-orig/hacks/pacman.c xscreensaver-5.10-todo/hacks/pacma
  /* Draws the pacman sprite, removing the previous location. */
  #if defined(USE_PIXMAP)
  
-diff -u xscreensaver-5.10-orig/hacks/pacman.h xscreensaver-5.10-todo/hacks/pacman.h
---- xscreensaver-5.10-orig/hacks/pacman.h	2006-03-05 09:07:21.000000000 +0100
-+++ xscreensaver-5.10-todo/hacks/pacman.h	2010-06-06 22:31:49.000000000 +0200
+diff -u hacks/pacman.h.orig hacks/pacman.h
+--- hacks/pacman.h.orig
++++ hacks/pacman.h
 @@ -221,6 +221,10 @@
      bonus_dot bonus_dots[NUM_BONUS_DOTS];
      struct tiles *tiles;
