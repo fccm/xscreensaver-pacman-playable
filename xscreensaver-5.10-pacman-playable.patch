@@ -1,0 +1,138 @@
+diff -u xscreensaver-5.10-orig/hacks/pacman_ai.c xscreensaver-5.10-todo/hacks/pacman_ai.c
+--- xscreensaver-5.10-orig/hacks/pacman_ai.c	2006-02-07 11:56:45.000000000 +0100
++++ xscreensaver-5.10-todo/hacks/pacman_ai.c	2010-06-06 22:22:45.000000000 +0200
+@@ -706,6 +706,37 @@
+     p->lastbox = dir;
+ }
+ 
++static void
++pac_user (pacmangamestruct * pp, pacmanstruct * p)
++{
++    int dir = pp->user_dir;
++
++    /*
++        pp->user_dir_changed = 1;
++    */
++
++    if ( check_pos (pp, p->row + dirvecs[dir].dy,
++                        p->col + dirvecs[dir].dx, 0) )
++    {
++       
++        p->nextrow = p->row + dirvecs[dir].dy;
++        p->nextcol = p->col + dirvecs[dir].dx;
++        p->lastbox = dir;
++
++    } else {
++        dir = pp->user_dir_last;
++        if ( check_pos (pp, p->row + dirvecs[dir].dy,
++                            p->col + dirvecs[dir].dx, 0) )
++        {
++           
++            p->nextrow = p->row + dirvecs[dir].dy;
++            p->nextcol = p->col + dirvecs[dir].dx;
++            p->lastbox = dir;
++
++        }
++    }
++}
++
+ static int
+ pac_get_vector_screen (pacmangamestruct * pp, pacmanstruct * p,
+                        const int x, const int y, int *vx, int *vy)
+@@ -854,6 +885,7 @@
+         p->justate = 0;
+     }
+ 
++#if 0
+     if (!(trackmouse && pac_trackmouse (mi, pp, p))) {
+         /* update pacman */
+         switch (p->aistate) {
+@@ -873,6 +905,8 @@
+             break; /* Don't move */
+         }
+     }
++#endif
++    pac_user (pp, p);
+ 
+     p->cfactor = GETFACTOR (p->nextcol, p->col);
+     p->rfactor = GETFACTOR (p->nextrow, p->row);
+diff -u xscreensaver-5.10-orig/hacks/pacman.c xscreensaver-5.10-todo/hacks/pacman.c
+--- xscreensaver-5.10-orig/hacks/pacman.c	2008-07-31 12:40:05.000000000 +0200
++++ xscreensaver-5.10-todo/hacks/pacman.c	2010-06-06 22:27:13.000000000 +0200
+@@ -57,7 +57,6 @@
+ #	define UNIFORM_COLORS
+ #	define BRIGHT_COLORS
+ #   define reshape_pacman 0
+-#   define pacman_handle_event 0
+ #	include "xlockmore.h"   /* in xscreensaver distribution */
+ #   include <assert.h>
+ #else /* STANDALONE */
+@@ -743,6 +742,54 @@
+   XFillRectangle(d,w,g,xl,yl,xs,ys)
+ 
+ 
++#include <X11/keysymdef.h>
++
++ENTRYPOINT Bool
++pacman_handle_event (ModeInfo * mi, XEvent *ev)
++{
++    pacmangamestruct *pp = &pacmangames[MI_SCREEN (mi)];
++    if (ev->xany.type == KeyPress) {
++        int index = 0;
++        KeySym keysym = XKeycodeToKeysym(MI_DISPLAY(mi), ev->xkey.keycode, index);
++        /*switch (ev->xkey.keycode) {*/
++	switch (keysym) {
++            case XK_Left:
++                if (pp->user_dir != 0) {
++                    pp->user_dir_changed = 1;
++                    pp->user_dir_last = pp->user_dir;
++                    pp->user_dir = 0;
++                }
++                else pp->user_dir_changed = 0;
++                return True;
++            case XK_Right:
++                if (pp->user_dir != 2) {
++                    pp->user_dir_changed = 1;
++                    pp->user_dir_last = pp->user_dir;
++                    pp->user_dir = 2;
++                }
++                else pp->user_dir_changed = 0;
++                return True;
++            case XK_Up:
++                if (pp->user_dir != 3) {
++                    pp->user_dir_changed = 1;
++                    pp->user_dir_last = pp->user_dir;
++                    pp->user_dir = 3;
++                }
++                else pp->user_dir_changed = 0;
++                return True;
++            case XK_Down:
++                if (pp->user_dir != 1) {
++                    pp->user_dir_changed = 1;
++                    pp->user_dir_last = pp->user_dir;
++                    pp->user_dir = 1;
++                }
++                else pp->user_dir_changed = 0;
++                return True;
++        }
++    }
++    return False;
++}
++
+ /* Draws the pacman sprite, removing the previous location. */
+ #if defined(USE_PIXMAP)
+ 
+diff -u xscreensaver-5.10-orig/hacks/pacman.h xscreensaver-5.10-todo/hacks/pacman.h
+--- xscreensaver-5.10-orig/hacks/pacman.h	2006-03-05 09:07:21.000000000 +0100
++++ xscreensaver-5.10-todo/hacks/pacman.h	2010-06-06 22:31:49.000000000 +0200
+@@ -221,6 +221,10 @@
+     bonus_dot bonus_dots[NUM_BONUS_DOTS];
+     struct tiles *tiles;
+ 
++    int user_dir;
++    int user_dir_changed;
++    int user_dir_last;
++
+ } pacmangamestruct;
+ 
+ extern pacmangamestruct *pacmangames;
